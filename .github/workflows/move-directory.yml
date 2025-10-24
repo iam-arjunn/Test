@@ -42,6 +42,14 @@ jobs:
             exit 1
           fi
 
+      - name: Copy source to target
+        run: |
+          cp -r "${{ github.event.inputs.source_path }}" "${{ github.event.inputs.target_path }}"
+
+      - name: Delete source directory
+        run: |
+          rm -rf "${{ github.event.inputs.source_path }}"
+
       - name: Commit and push changes using PAT
         env:
           PAT: ${{ secrets.MOVE_FOLDER }}
