@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository using PAT
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SYNC_PROJECTS }}  # Directly use the secret here
+          token: ${{ secrets.MOVE_FOLDER }}
 
       - name: Validate source directory
         run: |
@@ -32,6 +32,13 @@ jobs:
           TARGET_PARENT=$(dirname "${{ github.event.inputs.target_path }}")
           if [ ! -d "$TARGET_PARENT" ]; then
             echo "Error: Target directory parent does not exist."
+            exit 1
+          fi
+
+      - name: Prevent overwriting existing target
+        run: |
+          if [ -d "${{ github.event.inputs.target_path }}" ]; then
+            echo "Error: Target directory already exists."
             exit 1
           fi
 
@@ -49,4 +56,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add .
           git commit -m "Moved directory ${{ github.event.inputs.source_path }} to ${{ github.event.inputs.target_path }}" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.SYNC_PROJECTS }}@github.com/${{ github.repository }}.git
+          git push https://x-access-token:${{ secrets.MOVE_FOLDER }}@github.com/${{ github.repository }}.git
