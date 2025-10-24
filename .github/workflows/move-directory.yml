@@ -10,9 +10,9 @@ on:
         description: 'Enter target path (relative to repo root)'
         required: true
 
-permissions:
-  contents: write
-  
+env:
+  SECRET_NAME: SYNC_PROJECTS 
+
 jobs:
   move-directory:
     runs-on: ubuntu-latest
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SYNC_PROJECTS }}
 
       - name: Validate source directory
         run: |
