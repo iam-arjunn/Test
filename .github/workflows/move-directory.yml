@@ -11,7 +11,7 @@ on:
         required: true
 
 env:
-  SECRET_NAME: SYNC_PROJECTS  # Your PAT secret
+  TOKEN: ${{ secrets.SYNC_PROJECTS }}
 
 jobs:
   move-directory:
@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository using PAT
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SYNC_PROJECTS }}  # <-- Must match your repo secret
+          token: $TOKEN <-- Must match your repo secret
 
       - name: Validate source directory
         run: |
@@ -52,4 +52,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add .
           git commit -m "Moved directory ${{ github.event.inputs.source_path }} to ${{ github.event.inputs.target_path }}"
-          git push
+          git push https://x-access-token:$TOKEN@github.com/${{ github.repository }}.git
