@@ -11,17 +11,17 @@ on:
         required: true
 
 env:
-  SECRET_NAME: SYNC_PROJECTS 
+  SECRET_NAME: SYNC_PROJECTS  # Your PAT secret
 
 jobs:
   move-directory:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository using PAT
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.SYNC_PROJECTS }}
+          token: ${{ secrets.SYNC_PROJECTS }}  # <-- Must match your repo secret
 
       - name: Validate source directory
         run: |
