@@ -10,9 +10,6 @@ on:
         description: 'Enter target path (relative to repo root)'
         required: true
 
-env:
-  TOKEN: ${{ secrets.SYNC_PROJECTS }}
-
 jobs:
   move-directory:
     runs-on: ubuntu-latest
@@ -21,7 +18,7 @@ jobs:
       - name: Checkout repository using PAT
         uses: actions/checkout@v3
         with:
-          token: $TOKEN <-- Must match your repo secret
+          token: ${{ secrets.SYNC_PROJECTS }}  # Directly use the secret here
 
       - name: Validate source directory
         run: |
@@ -46,10 +43,10 @@ jobs:
         run: |
           rm -rf "${{ github.event.inputs.source_path }}"
 
-      - name: Commit and push changes
+      - name: Commit and push changes using PAT
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add .
-          git commit -m "Moved directory ${{ github.event.inputs.source_path }} to ${{ github.event.inputs.target_path }}"
-          git push https://x-access-token:$TOKEN@github.com/${{ github.repository }}.git
+          git commit -m "Moved directory ${{ github.event.inputs.source_path }} to ${{ github.event.inputs.target_path }}" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.SYNC_PROJECTS }}@github.com/${{ github.repository }}.git
