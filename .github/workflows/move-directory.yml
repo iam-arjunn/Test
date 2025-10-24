@@ -1,0 +1,50 @@
+name: Move Directory
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_path:
+        description: 'Enter source path (relative to repo root)'
+        required: true
+      target_path:
+        description: 'Enter target path (relative to repo root)'
+        required: true
+
+jobs:
+  move-directory:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Validate source directory
+        run: |
+          if [ ! -d "${{ github.event.inputs.source_path }}" ]; then
+            echo "Error: Source directory does not exist."
+            exit 1
+          fi
+
+      - name: Validate target directory parent
+        run: |
+          TARGET_PARENT=$(dirname "${{ github.event.inputs.target_path }}")
+          if [ ! -d "$TARGET_PARENT" ]; then
+            echo "Error: Target directory parent does not exist."
+            exit 1
+          fi
+
+      - name: Copy source to target
+        run: |
+          cp -r "${{ github.event.inputs.source_path }}" "${{ github.event.inputs.target_path }}"
+
+      - name: Delete source directory
+        run: |
+          rm -rf "${{ github.event.inputs.source_path }}"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Moved directory ${{ github.event.inputs.source_path }} to ${{ github.event.inputs.target_path }}"
+          git push
