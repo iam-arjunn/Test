@@ -1,4 +1,4 @@
-name: Copy Directory Contents
+name: Move Directory
 
 on:
   workflow_dispatch:
